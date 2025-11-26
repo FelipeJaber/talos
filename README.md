@@ -39,3 +39,17 @@ Below are required variables per environment.
 | ACTIVE_PROFILE             | String | local        | yes (Missing value forces non-production mode) | Active profile (e.g., `prod`)             |
 | JWT_SECRET                 | String | **_n/a_**    | yes                                            | MUST be a secure, unpredictable value     |
 | JWT_EXPIRATION_IN_MILLIS   | Long   | **_n/a_**    | yes                                            | Must follow company security guidelines   |
+
+## Tests
+
+The project includes a complete test suite for authentication, including:
+- JWT generation and validation
+- Secret strength checks
+- Expiration handling
+- Issuer validation
+- Invalid token scenarios
+
+To run the tests:
+
+```bash
+   mvn test

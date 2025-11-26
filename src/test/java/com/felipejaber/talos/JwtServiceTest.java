@@ -6,6 +6,9 @@ import com.felipejaber.talos.infra.config.security.InvalidTokenException;
 import com.felipejaber.talos.infra.config.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +23,7 @@ public class JwtServiceTest {
 
     @Test
     void shouldGenerateValidToken(){
-        String token = jwtService.generateToken("test-user");
+        String token = jwtService.generateToken("test-user", Collections.emptySet());
 
         assertNotNull(token);
 
@@ -48,7 +51,7 @@ public class JwtServiceTest {
     void shouldRejectExpiredToken() throws InterruptedException {
         JwtService shortLived = new JwtService("a-very-long-test-secret-value-1234567890", 1); // 1ms
 
-        String token = shortLived.generateToken("user");
+        String token = shortLived.generateToken("user",Collections.emptySet());
 
         Thread.sleep(5);
 
@@ -61,7 +64,7 @@ public class JwtServiceTest {
     void shouldRejectTokenWithDifferentSecret() {
         JwtService other = new JwtService("another-very-long-secret-1234567890", 60000);
 
-        String token = other.generateToken("user");
+        String token = other.generateToken("user",Collections.emptySet());
 
         assertThrows(InvalidTokenException.class,
                 () -> jwtService.getUserNameFromToken(token)

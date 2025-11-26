@@ -9,21 +9,22 @@ import java.util.Collection;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-    private final Object principal;
-    private String rawToken;
+    private final String username;
+    private final String rawToken;
 
-    // === Construtor para a requisição ENTRANTE (não autenticado) ===
+    // === Para token não autenticado ===
     public JwtAuthenticationToken(String rawToken) {
         super((Collection<? extends GrantedAuthority>) null);
+        this.username = null;
         this.rawToken = rawToken;
-        this.principal = null;
         setAuthenticated(false);
     }
 
-    // === Construtor para o usuário AUTENTICADO ===
-    public JwtAuthenticationToken(UserDetails user, Collection<? extends GrantedAuthority> authorities) {
+    // === Para token autenticado ===
+    public JwtAuthenticationToken(String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
-        this.principal = user;
+        this.username = username;
+        this.rawToken = null;
         setAuthenticated(true);
     }
 
@@ -34,7 +35,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return principal;
+        return username;
     }
-
 }
