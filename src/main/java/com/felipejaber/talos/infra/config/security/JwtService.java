@@ -60,6 +60,10 @@ public class JwtService {
                     .build().
                     verify(token);
 
+            String subject = decodedJWT.getSubject();
+
+            if(subject == null || subject.isBlank()) throw new InvalidTokenException("Token has no subject (sub) claim");
+
             return decodedJWT.getSubject();
         } catch (IllegalArgumentException | JWTVerificationException e) {
             log.warn("Invalid JWT signature: {}", e.getClass().getSimpleName());
