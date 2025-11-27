@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.UUID;
 
 
 @Component
@@ -14,17 +15,21 @@ public class JwtProvider {
 
     private final JwtService jwtService;
 
-    public String generateToken(String username, Set<GrantedAuthority> authorities) {
-        return jwtService.generateToken(username, authorities);
+    public String generateToken(UUID userId, Set<GrantedAuthority> authorities) {
+        return jwtService.generateToken(userId, authorities);
     }
 
-    public String getUserNameFromToken(String token) {
-        return jwtService.getUserNameFromToken(token);
+    public String generateRefreshToken(UUID userId) {
+        return jwtService.generateToken(userId);
+    }
+
+    public UUID getUserIdFromToken(String token) {
+        return jwtService.getUserIdFromToken(token);
     }
 
     public boolean validateToken(String token) {
         try{
-           jwtService.getUserNameFromToken(token);
+           jwtService.getUserIdFromToken(token);
            return true;
         } catch (Exception e){
             return false;

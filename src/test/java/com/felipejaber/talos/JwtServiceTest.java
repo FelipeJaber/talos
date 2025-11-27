@@ -6,9 +6,9 @@ import com.felipejaber.talos.infra.config.security.InvalidTokenException;
 import com.felipejaber.talos.infra.config.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,13 +23,14 @@ public class JwtServiceTest {
 
     @Test
     void shouldGenerateValidToken(){
-        String token = jwtService.generateToken("test-user", Collections.emptySet());
+        UUID userId = UUID.randomUUID();
+        String token = jwtService.generateToken(userId, Collections.emptySet());
 
         assertNotNull(token);
 
-        String username = jwtService.getUserNameFromToken(token);
+        UUID userIdFromToken = jwtService.getUserIdFromToken(token);
 
-        assertEquals("test-user", username);
+        assertEquals(userId, userIdFromToken);
     }
 
     @Test
@@ -44,30 +45,32 @@ public class JwtServiceTest {
     void shouldRejectInvalidToken(){
         String invalidToken = "a-very-long-but-invalid-test-secret-value-1234567890";
 
-        assertThrows(InvalidTokenException.class,() -> jwtService.getUserNameFromToken(invalidToken));
+        assertThrows(InvalidTokenException.class,() -> jwtService.getUserIdFromToken(invalidToken));
     }
 
     @Test
     void shouldRejectExpiredToken() throws InterruptedException {
+        UUID userId = UUID.randomUUID();
         JwtService shortLived = new JwtService("a-very-long-test-secret-value-1234567890", 1); // 1ms
 
-        String token = shortLived.generateToken("user",Collections.emptySet());
+        String token = shortLived.generateToken(userId,Collections.emptySet());
 
         Thread.sleep(5);
 
         assertThrows(InvalidTokenException.class,
-                () -> shortLived.getUserNameFromToken(token)
+                () -> shortLived.getUserIdFromToken(token)
         );
     }
 
     @Test
     void shouldRejectTokenWithDifferentSecret() {
+        UUID userId = UUID.randomUUID();
         JwtService other = new JwtService("another-very-long-secret-1234567890", 60000);
 
-        String token = other.generateToken("user",Collections.emptySet());
+        String token = other.generateToken(userId,Collections.emptySet());
 
         assertThrows(InvalidTokenException.class,
-                () -> jwtService.getUserNameFromToken(token)
+                () -> jwtService.getUserIdFromToken(token)
         );
     }
 
@@ -81,7 +84,7 @@ public class JwtServiceTest {
                 .sign(alg);
 
         assertThrows(InvalidTokenException.class,
-                () -> jwtService.getUserNameFromToken(token)
+                () -> jwtService.getUserIdFromToken(token)
         );
     }
 
@@ -94,21 +97,21 @@ public class JwtServiceTest {
                 .sign(alg);
 
         assertThrows(InvalidTokenException.class,
-                () -> jwtService.getUserNameFromToken(token)
+                () -> jwtService.getUserIdFromToken(token)
         );
     }
 
     @Test
     void shouldRejectNullToken() {
         assertThrows(InvalidTokenException.class,
-                () -> jwtService.getUserNameFromToken(null)
+                () -> jwtService.getUserIdFromToken(null)
         );
     }
 
     @Test
     void shouldRejectEmptyToken() {
         assertThrows(InvalidTokenException.class,
-                () -> jwtService.getUserNameFromToken("")
+                () -> jwtService.getUserIdFromToken("")
         );
     }
 

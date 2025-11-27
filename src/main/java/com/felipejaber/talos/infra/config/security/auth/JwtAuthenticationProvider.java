@@ -1,6 +1,5 @@
 package com.felipejaber.talos.infra.config.security.auth;
 
-import com.felipejaber.talos.infra.config.security.InvalidTokenException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,9 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
@@ -29,16 +27,16 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         String token = authentication.getCredentials().toString();
 
-        String username;
+        UUID userId;
         try {
-            username = jwtProvider.getUserNameFromToken(token);
+            userId = jwtProvider.getUserIdFromToken(token);
         } catch (Exception e) {
             throw new CredentialsExpiredException("Invalid or expired JWT token", e);
         }
 
         Set<GrantedAuthority> userAuthorities = jwtProvider.getAuthorities(token);
 
-        return new JwtAuthenticationToken(username, userAuthorities);
+        return new JwtAuthenticationToken(userId, userAuthorities);
     }
 
     @Override

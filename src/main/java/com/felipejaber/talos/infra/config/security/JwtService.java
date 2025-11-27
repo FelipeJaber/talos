@@ -12,10 +12,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +37,7 @@ public class JwtService {
         this.expirationInMillis = expirationInMillis;
     }
 
-    public String generateToken(String username, Set<GrantedAuthority> authorities){
+    public String generateToken(UUID userId, Set<GrantedAuthority> authorities){
         try {
             Instant now = Instant.now();
             Algorithm algorithm = Algorithm.HMAC512(secret);
@@ -47,7 +47,7 @@ public class JwtService {
                     .collect(Collectors.joining(","));
 
             return JWT.create()
-                    .withSubject(username)
+                    .withSubject(userId.toString())
                     .withIssuer("talos")
                     .withIssuedAt(Date.from(now))
                     .withExpiresAt(Date.from(now.plusMillis(expirationInMillis)))
@@ -60,7 +60,7 @@ public class JwtService {
         }
     }
 
-    public String getUserNameFromToken(String token){
+    public UUID getUserIdFromToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC512(secret);
 
@@ -73,7 +73,7 @@ public class JwtService {
 
             if(subject == null || subject.isBlank()) throw new InvalidTokenException("Token has no subject (sub) claim");
 
-            return decodedJWT.getSubject();
+            return UUID.fromString(decodedJWT.getSubject());
         } catch (IllegalArgumentException | JWTVerificationException e) {
             log.warn("Invalid JWT signature: {}", e.getClass().getSimpleName());
             throw new InvalidTokenException("Invalid or expired JWT token", e);
@@ -93,6 +93,24 @@ public class JwtService {
         } catch (Exception e) {
             log.warn("Failed to parse authorities from token: {}", e.getClass().getSimpleName());
             return Set.of();
+        }
+    }
+
+    public String generateToken(UUID userId) {
+        try {
+            Instant now = Instant.now();
+            Algorithm algorithm = Algorithm.HMAC512(secret);
+
+            return JWT.create()
+                    .withSubject(userId.toString())
+                    .withIssuer("talos")
+                    .withIssuedAt(Date.from(now))
+                    .withExpiresAt(Date.from(now.plusMillis(expirationInMillis)))
+                    .sign(algorithm);
+
+        } catch (IllegalArgumentException | JWTCreationException e) {
+            log.error("Error generating JWT token: {}", e.getClass().getSimpleName());
+            throw new TokenCreationException("Error generating JWT", e);
         }
     }
 }
