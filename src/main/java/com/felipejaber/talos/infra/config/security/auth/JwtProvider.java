@@ -17,11 +17,11 @@ public class JwtProvider {
     private final JwtService jwtService;
 
     public String generateToken(UUID userId, Set<GrantedAuthority> authorities) {
-        return jwtService.generateToken(userId, authorities);
+        return jwtService.generateRefreshToken(userId, authorities);
     }
 
     public String generateRefreshToken(UUID userId) {
-        return jwtService.generateToken(userId);
+        return jwtService.generateRefreshToken(userId);
     }
 
     public UUID getUserIdFromToken(String token) {

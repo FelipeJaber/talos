@@ -37,7 +37,7 @@ public class JwtService {
         this.expirationInMillis = expirationInMillis;
     }
 
-    public String generateToken(UUID userId, Set<GrantedAuthority> authorities){
+    public String generateRefreshToken(UUID userId, Set<GrantedAuthority> authorities){
         try {
             Instant now = Instant.now();
             Algorithm algorithm = Algorithm.HMAC512(secret);
@@ -50,7 +50,7 @@ public class JwtService {
                     .withSubject(userId.toString())
                     .withIssuer("talos")
                     .withIssuedAt(Date.from(now))
-                    .withExpiresAt(Date.from(now.plusMillis(expirationInMillis)))
+                    .withExpiresAt(Date.from(now.plusMillis(86400000)))
                     .withClaim("roles", roles) // salva roles como claim
                     .sign(algorithm);
 
@@ -96,7 +96,7 @@ public class JwtService {
         }
     }
 
-    public String generateToken(UUID userId) {
+    public String generateRefreshToken(UUID userId) {
         try {
             Instant now = Instant.now();
             Algorithm algorithm = Algorithm.HMAC512(secret);

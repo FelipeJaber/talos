@@ -51,5 +51,56 @@ The project includes a complete test suite for authentication, including:
 
 To run the tests:
 
-```bash
-   mvn test
+```bash 
+mvn test
+```
+## Authentication Flow
+
+The server uses a dual-token authentication model composed of access tokens (JWT) and refresh tokens, supported by a persistent session registry.
+
+### Access Token (JWT)
+
+- Generated at login.
+- Contains only essential claims (issuer, subject, issued-at, expiration).
+- Signed with HMAC512 using JWT_SECRET.
+- Validation checks:
+  - Signature correctness
+  - Issuer (talos)
+  - Expiration (exp)
+  - Subject (sub) in UUID format
+
+All expiration logic relies exclusively on JWT data. No database fields are used to determine token validity.
+
+### Refresh Token
+
+- Random, opaque string.
+- Stored in the database as part of an AuthSession record.
+- Linked to a single userId.
+- Not parsed or interpreted by the server, only matched against stored values.
+
+### Session Registry
+
+Each login issues a new AuthSession entry with:
+
+- user reference
+- refreshToken
+- lastUsedAt timestamp
+  
+The server does not maintain expiration logic on the database.
+
+A refresh token is treated as valid while it exists and matches userId + refreshToken for an active session.
+
+### Refresh Flow
+
+1. Client sends the refresh token.
+
+2. Server looks up the matching session.
+
+3. If found:
+   - A new access token is generated.
+   - lastUsedAt is updated.
+
+4. If not found:
+   - The refresh attempt is rejected.
+
+The refresh token itself has no cryptographic expiration; its lifecycle is controlled by session persistence (e.g., user logout, rotation, or administrative invalidation).

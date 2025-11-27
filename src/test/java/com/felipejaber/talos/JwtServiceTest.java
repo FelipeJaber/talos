@@ -24,7 +24,7 @@ public class JwtServiceTest {
     @Test
     void shouldGenerateValidToken(){
         UUID userId = UUID.randomUUID();
-        String token = jwtService.generateToken(userId, Collections.emptySet());
+        String token = jwtService.generateRefreshToken(userId, Collections.emptySet());
 
         assertNotNull(token);
 
@@ -53,7 +53,7 @@ public class JwtServiceTest {
         UUID userId = UUID.randomUUID();
         JwtService shortLived = new JwtService("a-very-long-test-secret-value-1234567890", 1); // 1ms
 
-        String token = shortLived.generateToken(userId,Collections.emptySet());
+        String token = shortLived.generateRefreshToken(userId,Collections.emptySet());
 
         Thread.sleep(5);
 
@@ -67,7 +67,7 @@ public class JwtServiceTest {
         UUID userId = UUID.randomUUID();
         JwtService other = new JwtService("another-very-long-secret-1234567890", 60000);
 
-        String token = other.generateToken(userId,Collections.emptySet());
+        String token = other.generateRefreshToken(userId,Collections.emptySet());
 
         assertThrows(InvalidTokenException.class,
                 () -> jwtService.getUserIdFromToken(token)
