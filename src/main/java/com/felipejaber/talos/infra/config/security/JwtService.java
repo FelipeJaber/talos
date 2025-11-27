@@ -113,4 +113,8 @@ public class JwtService {
             throw new TokenCreationException("Error generating JWT", e);
         }
     }
+
+    public Instant getExpireInstant(String refreshToken) {
+        return JWT.decode(refreshToken).getExpiresAtAsInstant();
+    }
 }

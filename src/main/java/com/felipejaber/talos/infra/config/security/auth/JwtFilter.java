@@ -35,7 +35,6 @@ public class JwtFilter extends AbstractAuthenticationProcessingFilter {
 
         String rawToken = header.substring(PREFIX.length());
 
-        //Not authenticated yet
         JwtAuthenticationToken authRequest = new JwtAuthenticationToken(rawToken);
 
         return this.getAuthenticationManager().authenticate(authRequest);

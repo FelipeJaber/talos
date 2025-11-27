@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-public class AuthSessions {
+public class AuthSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,9 +25,6 @@ public class AuthSessions {
     @Column(name ="created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name ="expires_at", nullable = false)
-    private Instant expiresAt;
-
     @Column(name ="last_used_at", nullable = false)
     private Instant lastUsedAt;
 
@@ -39,5 +35,15 @@ public class AuthSessions {
     @Column(name ="revoked", nullable = false)
     private boolean revoked;
 
+    public boolean isExpired(Instant expiresAt){
+        return Instant.now().isAfter(expiresAt);
+    }
+
+    public AuthSession(UserData user, String refreshToken) {
+        this.user = user;
+        this.refreshToken = refreshToken;
+        this.lastUsedAt = Instant.now();
+        this.revoked = false;
+    }
 
 }

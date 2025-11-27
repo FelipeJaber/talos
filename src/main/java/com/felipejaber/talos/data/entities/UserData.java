@@ -6,10 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,7 +33,7 @@ public class UserData {
     private Set<String> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    Set<AuthSessions> sessions = new HashSet<>();
+    Set<AuthSession> sessions = new HashSet<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "created_at")

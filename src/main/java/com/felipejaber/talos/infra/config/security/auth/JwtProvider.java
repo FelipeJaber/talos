@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,5 +39,9 @@ public class JwtProvider {
 
     public Set<GrantedAuthority> getAuthorities(String token) {
         return jwtService.getAuthorities(token);
+    }
+
+    public Instant getExpireInstant(String refreshToken) {
+        return jwtService.getExpireInstant(refreshToken);
     }
 }
