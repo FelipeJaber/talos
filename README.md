@@ -26,11 +26,11 @@ Below are required variables per environment.
 
 ### Local / Development
 
-| Variable                   | Type   | Default              | Required | Description                    |
-|----------------------------|--------|----------------------|----------|--------------------------------|
-| ACTIVE_PROFILE             | String | local                | no       | Active project profile         |
-| JWT_SECRET                 | String | dev-secret-test-only | no       | Secret key for JWT signing     |
-| JWT_EXPIRATION_IN_MILLIS   |  Long  | 3600000              | no       | Token validity in milliseconds |
+| Variable                   | Type   | Default                                  | Required | Description                    |
+|----------------------------|--------|------------------------------------------|----------|--------------------------------|
+| ACTIVE_PROFILE             | String | local                                    | no       | Active project profile         |
+| JWT_SECRET                 | String | a-very-long-test-secret-value-1234567890 | no       | Secret key for JWT signing     |
+| JWT_EXPIRATION_IN_MILLIS   |  Long  | 3600000                                  | no       | Token validity in milliseconds |
 
 ### Production
 
