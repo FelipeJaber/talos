@@ -1,4 +1,4 @@
 package com.felipejaber.talos.presentation.dtos;
 
-public record SetPasswordRequest() {
+public record SetPasswordRequest(String password, String confirmPassword) {
 }
