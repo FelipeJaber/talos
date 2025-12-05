@@ -73,7 +73,7 @@ All expiration logic relies exclusively on JWT data. No database fields are used
 
 ### Refresh Token
 
-- Random, opaque string.
+- UUID-formatted string.
 - Stored in the database as part of an AuthSession record.
 - Linked to a single userId.
 - Not parsed or interpreted by the server, only matched against stored values.
