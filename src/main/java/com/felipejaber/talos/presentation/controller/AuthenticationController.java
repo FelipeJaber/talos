@@ -54,4 +54,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        authService.invalidateSession(authHeader);
+        return ResponseEntity.ok().build();
+    }
+
 }

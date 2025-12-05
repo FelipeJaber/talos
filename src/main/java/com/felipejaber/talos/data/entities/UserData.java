@@ -42,4 +42,11 @@ public class UserData {
     @UpdateTimestamp
     @Column(nullable = false, name = "updated_at")
     private Instant updatedAt;
+
+    public UserData(String email, String hashedPassword, Set<String> roles) {
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+        this.roles = roles;
+    }
+
 }

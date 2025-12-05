@@ -7,4 +7,5 @@ public interface AuthService {
     AuthenticatedUserData refreshToken(String refreshToken);
     AuthenticatedUserData setPassword(String token, String password);
     void register(String email);
+    void invalidateSession(String refreshToken);
 }
