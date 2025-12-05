@@ -1,7 +1,9 @@
 package com.felipejaber.talos.infra.config.security.password;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PasswordEncoder {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

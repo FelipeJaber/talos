@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
 
         RegisterSession registerSession = new RegisterSession();
 
-        Optional<RegisterSession> dbRegisterSession = registerSessionRepository.findByIdEmail(email);
+        Optional<RegisterSession> dbRegisterSession = registerSessionRepository.findByEmail(email);
 
         if(dbRegisterSession.isPresent()) {
             registerSession = dbRegisterSession.get();
