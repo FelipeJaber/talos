@@ -15,6 +15,7 @@ import com.felipejaber.talos.infra.config.security.auth.JwtProvider;
 import com.felipejaber.talos.infra.config.security.password.PasswordEncoder;
 import com.felipejaber.talos.infra.external.smtp.SmtpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -30,15 +31,18 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final SmtpService smtpService;
+    private final String baseUrl;
 
     @Autowired
-    public AuthServiceImpl(UserDataRepository userDataRepository, AuthSessionRepository sessionRepository, RegisterSessionRepository registerSessionRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, SmtpService smtpService) {
+    public AuthServiceImpl(UserDataRepository userDataRepository, AuthSessionRepository sessionRepository, RegisterSessionRepository registerSessionRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, SmtpService smtpService,
+                           @Value("base.url") String baseUrl) {
         this.userDataRepository = userDataRepository;
         this.sessionRepository = sessionRepository;
         this.registerSessionRepository = registerSessionRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.smtpService = smtpService;
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -117,6 +121,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(String email) {
+
+        RegisterSession registerSession = new RegisterSession();
+
+        Optional<RegisterSession> dbRegisterSession = registerSessionRepository.findByIdEmail(email);
+
+        if(dbRegisterSession.isPresent()) {
+            registerSession = dbRegisterSession.get();
+        }else{
+            registerSession.setEmail(email);
+            registerSession.setCreatedAt(Instant.now());
+        }
+
+        registerSessionRepository.save(registerSession);
+
+        smtpService.sendEmail(email, "Welcome to Talos!", "Access your account at: " + baseUrl + "/api/auth/v1/set-password/" + registerSession.getSessionId());
 
     }
 
